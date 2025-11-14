@@ -1,0 +1,142 @@
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #f2f2f2;
+  background: #050505;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #151515, #040404);
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+#game-canvas {
+  width: 100vw;
+  height: 100vh;
+  image-rendering: pixelated;
+}
+
+#mini-map {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  bottom: 24px;
+  right: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 5, 0.8);
+  z-index: 10;
+}
+
+.screen--visible {
+  display: flex;
+}
+
+.panel {
+  padding: 32px 48px;
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+  border-radius: 18px;
+  text-align: center;
+  max-width: 460px;
+}
+
+.panel h1 {
+  margin-bottom: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-weight: 300;
+  color: #9ad5ff;
+}
+
+button {
+  background: linear-gradient(90deg, #ff5f6d, #ffc371);
+  color: #050505;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 18px;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.instructions {
+  margin-top: 26px;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #dcdcdc;
+}
+
+#hud {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  z-index: 4;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+}
+
+#hud.hidden {
+  opacity: 0;
+}
+
+.hud-bar {
+  display: flex;
+  gap: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#end-screen h2 {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+#end-screen p {
+  color: #86f7ff;
+}

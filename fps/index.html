@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fission Point // Browser FPS Prototype</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="menu" class="screen screen--visible">
+      <div class="panel">
+        <h1>Fission Point</h1>
+        <p class="subtitle">Micro Half-Life inspired experiment, running 100% in Canvas</p>
+        <button id="start-btn">Enter The Facility</button>
+        <div class="instructions">
+          <p><strong>Movement</strong>: A / W / S / D to strafe + move, Mouse to look, Y for Hyper Dash</p>
+          <p><strong>Combat</strong>: Left click to fire plasma pulses</p>
+          <p><strong>Goal</strong>: Survive as long as possible against procedural threats</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-bar">
+        <span id="health">Health: 100</span>
+        <span id="score">Score: 0</span>
+        <span id="stage">Sector: 1</span>
+      </div>
+      <div class="hud-bar">
+        <span>A/W/S/D move &amp; strafe</span>
+        <span>Mouse: Look</span>
+        <span>Y: Hyper Dash</span>
+        <span>Click: Fire</span>
+      </div>
+    </div>
+
+    <canvas id="game-canvas" width="1280" height="720"></canvas>
+    <canvas id="mini-map" width="200" height="200"></canvas>
+
+    <div id="end-screen" class="screen">
+      <div class="panel">
+        <h2>Simulation Failed</h2>
+        <p id="final-score">Score: 0</p>
+        <button id="restart-btn">Run Another Sim</button>
+      </div>
+    </div>
+
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
