@@ -1,0 +1,5 @@
+@import url('/design/css/app.css');
+
+:global(body) {
+  margin: 0;
+}

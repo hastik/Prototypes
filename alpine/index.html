@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-app="project-tracker">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Delivery Console · Alpine</title>
+    <link rel="stylesheet" href="/design/css/app.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    <script type="module" defer src="./app.js"></script>
+  </head>
+  <body x-data class="alpine-app" x-cloak>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="badge">Ops</div>
+          <div class="brand-copy">
+            <h1>Project Delivery Console</h1>
+            <p>Insights, prioritisation, and task control</p>
+          </div>
+        </div>
+        <div class="auth-slot" data-slot="auth">
+          <template x-if="$store.app.isAuthed">
+            <div class="auth-state">
+              <span>Signed in as <strong x-text="$store.app.user.name"></strong></span>
+              <button x-on:click="$store.app.logout()">Logout</button>
+            </div>
+          </template>
+          <template x-if="!$store.app.isAuthed">
+            <div>
+              <span>Guest</span>
+            </div>
+          </template>
+        </div>
+      </header>
+
+      <section class="app-hero">
+        <div class="hero-copy">
+          <h2>Workboard</h2>
+          <p>Use the filters to focus, then manage projects and their tasks inline.</p>
+        </div>
+        <div class="hero-metrics" data-slot="metrics">
+          <template x-for="metric in $store.app.metrics()" :key="metric.label">
+            <div class="metric-card">
+              <p x-text="metric.label"></p>
+              <h3 x-text="metric.value"></h3>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <section class="panel panel--toolbar" data-slot="toolbar">
+        <form class="form-grid form-grid--small" x-on:submit.prevent="$store.app.applyFilter($event)">
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" x-model="$store.app.filters.status">
+              <option value="">All</option>
+              <template x-for="status in $store.app.statuses" :key="status">
+                <option x-text="status" :value="status"></option>
+              </template>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select name="priority" x-model="$store.app.filters.priority">
+              <option value="">All</option>
+              <template x-for="priority in $store.app.priorities" :key="priority">
+                <option x-text="priority" :value="priority"></option>
+              </template>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Search</label>
+            <input name="search" placeholder="Project or owner" x-model="$store.app.filters.search" />
+          </div>
+          <button type="submit">Apply</button>
+        </form>
+      </section>
+
+      <div class="panel-grid">
+        <section class="panel panel--list" data-slot="projects">
+          <template x-if="!$store.app.isAuthed">
+            <div class="list-empty"><p>Sign in to view projects.</p></div>
+          </template>
+          <template x-if="$store.app.isAuthed">
+            <template x-if="$store.app.filteredProjects().length === 0">
+              <div class="list-empty"><p>No projects match the filters.</p></div>
+            </template>
+            <template x-for="project in $store.app.filteredProjects()" :key="project.id">
+              <article class="project-card">
+                <header>
+                  <div>
+                    <h3 x-text="project.name"></h3>
+                    <small>Owner: <span x-text="project.owner"></span></small>
+                  </div>
+                  <span class="status-pill" :data-state="project.status" x-text="project.status"></span>
+                </header>
+                <p>
+                  Progress: <span x-text="project.progress"></span>% · Timeline:
+                  <span x-text="project.timeline || 'tbd'"></span>
+                </p>
+                <p>Tasks: <span x-text="project.tasks?.length || 0"></span></p>
+                <div class="card-actions">
+                  <button class="btn btn--ghost" x-on:click="$store.app.editProject(project)">Edit</button>
+                  <button class="btn btn--ghost" x-on:click="$store.app.deleteProject(project.id)">Delete</button>
+                </div>
+              </article>
+            </template>
+          </template>
+        </section>
+
+        <section class="panel panel--main" data-slot="tasks">
+          <template x-if="!$store.app.isAuthed">
+            <div class="list-empty"><p>Sign in to manage tasks.</p></div>
+          </template>
+          <template x-if="$store.app.isAuthed">
+            <template x-for="project in $store.app.filteredProjects()" :key="'tasks-' + project.id">
+              <div>
+                <h3 x-text="project.name"></h3>
+                <template x-if="$store.app.filteredTasks(project).length === 0">
+                  <div class="list-empty"><p>No tasks for this filter.</p></div>
+                </template>
+                <template x-for="task in $store.app.filteredTasks(project)" :key="task.id">
+                  <article class="task-card">
+                    <header>
+                      <strong x-text="task.title"></strong>
+                      <span class="status-pill" :data-state="task.status" x-text="task.status"></span>
+                    </header>
+                    <p>Assignee: <span x-text="task.assignee"></span> · Priority: <span x-text="task.priority"></span></p>
+                    <p>Due: <span x-text="task.dueDate || 'tbd'"></span></p>
+                    <div class="card-actions">
+                      <button class="btn btn--ghost" x-on:click="$store.app.editTask(project.id, task)">Edit</button>
+                      <button class="btn btn--ghost" x-on:click="$store.app.deleteTask(project.id, task.id)">Delete</button>
+                    </div>
+                  </article>
+                </template>
+              </div>
+            </template>
+          </template>
+        </section>
+
+        <section class="panel panel--form" data-slot="forms">
+          <template x-if="!$store.app.isAuthed">
+            <form class="form-grid" x-on:submit.prevent="$store.app.login($event)">
+              <h3>Sign in</h3>
+              <div class="form-group">
+                <label>Username</label>
+                <input name="username" value="admin" />
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" value="1234" />
+              </div>
+              <button type="submit">Access console</button>
+            </form>
+          </template>
+          <template x-if="$store.app.isAuthed">
+            <div class="form-grid">
+              <section>
+                <h3 x-text="$store.app.projectForm.id ? 'Edit project' : 'New project'"></h3>
+                <form class="form-grid" x-on:submit.prevent="$store.app.saveProject()">
+                  <input type="hidden" x-model="$store.app.projectForm.id" />
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input x-model="$store.app.projectForm.name" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Owner</label>
+                    <input x-model="$store.app.projectForm.owner" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Status</label>
+                    <select x-model="$store.app.projectForm.status" required>
+                      <option value="">Select</option>
+                      <template x-for="status in $store.app.statuses" :key="'project-status-' + status">
+                        <option :value="status" x-text="status"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Progress %</label>
+                    <input type="number" min="0" max="100" x-model.number="$store.app.projectForm.progress" />
+                  </div>
+                  <div class="form-group">
+                    <label>Timeline</label>
+                    <input x-model="$store.app.projectForm.timeline" />
+                  </div>
+                  <button type="submit">Save</button>
+                  <button type="button" x-show="$store.app.projectForm.id" x-on:click="$store.app.resetProjectForm()">Cancel</button>
+                </form>
+              </section>
+              <section>
+                <h3 x-text="$store.app.taskForm.id ? 'Edit task' : 'New task'"></h3>
+                <form class="form-grid" x-on:submit.prevent="$store.app.saveTask()">
+                  <input type="hidden" x-model="$store.app.taskForm.id" />
+                  <div class="form-group">
+                    <label>Project</label>
+                    <select x-model="$store.app.taskForm.projectId" required>
+                      <option value="">Select project</option>
+                      <template x-for="project in $store.app.data.projects" :key="'select-' + project.id">
+                        <option :value="project.id" x-text="project.name"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Title</label>
+                    <input x-model="$store.app.taskForm.title" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Assignee</label>
+                    <input x-model="$store.app.taskForm.assignee" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Priority</label>
+                    <select x-model="$store.app.taskForm.priority" required>
+                      <template x-for="priority in $store.app.priorities" :key="'priority-' + priority">
+                        <option :value="priority" x-text="priority"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Status</label>
+                    <select x-model="$store.app.taskForm.status" required>
+                      <template x-for="status in $store.app.statuses" :key="'task-status-' + status">
+                        <option :value="status" x-text="status"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Due date</label>
+                    <input x-model="$store.app.taskForm.dueDate" placeholder="2025-12-01" />
+                  </div>
+                  <button type="submit">Save</button>
+                  <button type="button" x-show="$store.app.taskForm.id" x-on:click="$store.app.resetTaskForm()">Cancel</button>
+                </form>
+              </section>
+            </div>
+          </template>
+        </section>
+      </div>
+
+      <footer class="app-footer">
+        <small>Shared layout from /design/html/layout.html</small>
+        <div class="footer-actions" data-slot="footer">
+          <span>AlpineJS · LocalStorage</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

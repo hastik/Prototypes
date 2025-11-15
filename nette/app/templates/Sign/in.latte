@@ -1,0 +1,51 @@
+{block title}Sign in{/block}
+
+{block auth}
+  <div>
+    <strong>Guest</strong>
+    <a n:href="Sign:in" class="btn">Sign in</a>
+  </div>
+{/block}
+
+{block metrics}
+  <div class="metric-card">
+    <p>Account</p>
+    <h3>Admin</h3>
+  </div>
+{/block}
+
+{block toolbar}
+  <p>Authenticate with <code>admin / 1234</code> to access the dashboard.</p>
+{/block}
+
+{block projects}
+  <div class="list-empty">
+    <p>Projects become visible after authentication.</p>
+  </div>
+{/block}
+
+{block tasks}
+  <div class="list-empty">
+    <p>Tasks become visible after authentication.</p>
+  </div>
+{/block}
+
+{block forms}
+  <h3>Sign in</h3>
+  {form signInForm}
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="sign-username">Username</label>
+        <input n:name="username" id="sign-username" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label for="sign-password">Password</label>
+        <input n:name="password" id="sign-password" placeholder="1234" type="password">
+      </div>
+      <button n:name="send">Access console</button>
+    </div>
+    <ul n:if="$form->hasErrors()">
+      <li n:foreach="$form->errors as $error">{$error}</li>
+    </ul>
+  {/form}
+{/block}

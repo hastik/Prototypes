@@ -1,0 +1,8 @@
+parameters:
+  dataFile: %dataFile%
+
+services:
+  router: App\Router\RouterFactory::createRouter
+  - App\Model\DataRepository(%dataFile%)
+  - App\Model\DashboardService(@App\Model\DataRepository)
+  security.authenticator: App\Model\Authenticator

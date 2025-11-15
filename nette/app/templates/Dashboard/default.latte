@@ -1,0 +1,155 @@
+{block title}Dashboard{/block}
+
+{block auth}
+  <div class="auth-state">
+    <span>Signed in as <strong>{$appUser->getIdentity()->getId()}</strong></span>
+    <a n:href="Sign:out">Sign out</a>
+  </div>
+{/block}
+
+{block metrics}
+  <div class="metric-card" n:foreach="$metrics as $metric">
+    <p>{$metric['label']}</p>
+    <h3>{$metric['value']}</h3>
+  </div>
+{/block}
+
+{block toolbar}
+  <form method="get" class="form-grid form-grid--small">
+    <div class="form-group">
+      <label for="status-filter">Status</label>
+      <select name="status" id="status-filter">
+        <option value="">All</option>
+        <option n:foreach="$filters['statuses'] ?? [] as $statusOption"
+                value="{$statusOption}"
+                n:selected="$filterValues['status'] ?? null === $statusOption">
+          {$statusOption|capitalize}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="priority-filter">Priority</label>
+      <select name="priority" id="priority-filter">
+        <option value="">All</option>
+        <option n:foreach="$filters['priorities'] ?? [] as $priorityOption"
+                value="{$priorityOption}"
+                n:selected="$filterValues['priority'] ?? null === $priorityOption">
+          {$priorityOption|capitalize}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="search">Search</label>
+      <input name="search" id="search" placeholder="Project or owner" value="{$filterValues['search'] ?? ''}">
+    </div>
+    <button type="submit">Apply</button>
+  </form>
+{/block}
+
+{block projects}
+  <div n:if="count($projects) === 0" class="list-empty">
+    <p>No projects yet. Use the form to add one.</p>
+  </div>
+  <article class="project-card" n:foreach="$projects as $project">
+    <header>
+      <div>
+        <h3>{$project['name']}</h3>
+        <small>Owner: {$project['owner']}</small>
+      </div>
+      <span class="status-pill" data-state="{$project['status']}">
+        {$project['status']}
+      </span>
+    </header>
+    <p>Progress: {$project['progress']}% · Timeline: {$project['timeline'] ?? 'tbd'}</p>
+    <p>Tasks: {count($project['tasks'] ?? [])}</p>
+    <div class="card-actions">
+      <a href="{$link 'Dashboard:default', ['id' => $project['id']]}" class="btn">Focus</a>
+      <a href="{$link 'deleteProject!', ['id' => $project['id']]}" class="btn" data-confirm="Remove project?">Delete</a>
+    </div>
+  </article>
+{/block}
+
+{block tasks}
+  <div n:if="count($projects) === 0" class="list-empty">
+    <p>Tasks will show up once you add a project.</p>
+  </div>
+  <div n:foreach="$projects as $project">
+    <h3>{$project['name']} tasks</h3>
+    <div n:if="count($project['tasks'] ?? []) === 0" class="list-empty">
+      <p>No tasks under this project.</p>
+    </div>
+    <article class="task-card" n:foreach="$project['tasks'] ?? [] as $task">
+      <header>
+        <strong>{$task['title']}</strong>
+        <span class="status-pill" data-state="{$task['status']}">{$task['status']}</span>
+      </header>
+      <p>Assignee: {$task['assignee']} · Priority: {$task['priority']}</p>
+      <p>Due: {$task['dueDate'] ?: 'tbd'}</p>
+      <a href="{$link 'deleteTask!', ['projectId' => $project['id'], 'taskId' => $task['id'] ?? '']}" class="btn btn--ghost">Delete</a>
+    </article>
+  </div>
+{/block}
+
+{block forms}
+  <section>
+    <h3>Project</h3>
+    {form projectForm}
+      <div class="form-grid">
+        <input n:name="id" type="hidden">
+        <div class="form-group">
+          <label>Name</label>
+          <input n:name="name">
+        </div>
+        <div class="form-group">
+          <label>Owner</label>
+          <input n:name="owner">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select n:name="status"></select>
+        </div>
+        <div class="form-group">
+          <label>Progress</label>
+          <input n:name="progress" type="number" min="0" max="100">
+        </div>
+        <div class="form-group">
+          <label>Timeline</label>
+          <input n:name="timeline">
+        </div>
+        <button n:name="save">Save</button>
+      </div>
+    {/form}
+  </section>
+  <section>
+    <h3>Task</h3>
+    {form taskForm}
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Project</label>
+          <select n:name="projectId"></select>
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input n:name="title">
+        </div>
+        <div class="form-group">
+          <label>Assignee</label>
+          <input n:name="assignee">
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select n:name="priority"></select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select n:name="status"></select>
+        </div>
+        <div class="form-group">
+          <label>Due date</label>
+          <input n:name="dueDate" placeholder="2025-12-01">
+        </div>
+        <button n:name="save">Save</button>
+      </div>
+    {/form}
+  </section>
+{/block}
