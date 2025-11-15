@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-app="project-tracker">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{ifset title}{include title} | {/ifset}Project Delivery Console</title>
+    <link rel="stylesheet" href="{$basePath}design/css/app.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="badge">Ops</div>
+          <div class="brand-copy">
+            <h1>Project Delivery Console</h1>
+            <p>Insights, prioritisation, and task control</p>
+          </div>
+        </div>
+        <div class="auth-slot" data-slot="auth">
+          {block auth}
+            <a href="{$link 'Sign:in'}">Sign in</a>
+          {/block}
+        </div>
+      </header>
+
+      <ul n:if="$flashes" class="flash-list">
+        <li n:foreach="$flashes as $flash">{$flash->message}</li>
+      </ul>
+
+      <section class="app-hero">
+        <div class="hero-copy">
+          <h2>Workboard</h2>
+          <p>Use the filters to focus, then manage projects and their tasks inline.</p>
+        </div>
+        <div class="hero-metrics" data-slot="metrics">
+          {block metrics}{/block}
+        </div>
+      </section>
+
+      <section class="panel panel--toolbar" data-slot="toolbar">
+        {block toolbar}{/block}
+      </section>
+
+      <div class="panel-grid">
+        <section class="panel panel--list" data-slot="projects">
+          {block projects}{/block}
+        </section>
+        <section class="panel panel--main" data-slot="tasks">
+          {block tasks}{/block}
+        </section>
+        <section class="panel panel--form" data-slot="forms">
+          {block forms}{/block}
+        </section>
+      </div>
+
+      <footer class="app-footer">
+        <small>Shared layout from /design/html/layout.html</small>
+        <div class="footer-actions" data-slot="footer">
+          {block footer}
+            <span>Synced via Nette Presenter</span>
+          {/block}
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

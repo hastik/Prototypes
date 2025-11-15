@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-app="project-tracker">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Delivery Console · Vanilla</title>
+    <link rel="stylesheet" href="/design/css/app.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="badge">Ops</div>
+          <div class="brand-copy">
+            <h1>Project Delivery Console</h1>
+            <p>Insights, prioritisation, and task control</p>
+          </div>
+        </div>
+        <div class="auth-slot" data-slot="auth">
+          <!-- SLOT:auth -->
+        </div>
+      </header>
+
+      <section class="app-hero">
+        <div class="hero-copy">
+          <h2>Workboard</h2>
+          <p>Use the filters to focus, then manage projects and their tasks inline.</p>
+        </div>
+        <div class="hero-metrics" data-slot="metrics">
+          <!-- SLOT:metrics -->
+        </div>
+      </section>
+
+      <section class="panel panel--toolbar" data-slot="toolbar">
+        <!-- SLOT:toolbar -->
+      </section>
+
+      <div class="panel-grid">
+        <section class="panel panel--list" data-slot="projects">
+          <!-- SLOT:projects -->
+        </section>
+        <section class="panel panel--main" data-slot="tasks">
+          <!-- SLOT:tasks -->
+        </section>
+        <section class="panel panel--form" data-slot="forms">
+          <!-- SLOT:forms -->
+        </section>
+      </div>
+
+      <footer class="app-footer">
+        <small>Shared layout from /design/html/layout.html</small>
+        <div class="footer-actions" data-slot="footer">
+          <!-- SLOT:footer -->
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
